@@ -1,4 +1,5 @@
-*/.idea/
-*/media/
-/.ipynb_checkpoints/
+**/.idea/
+**/media/*
+**/.ipynb_checkpoints/
 /workbooks/manim-test.ipynb
+/tools/tests.py
