@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Type
 
 from manim import *
 from pathlib import Path
@@ -17,6 +17,16 @@ def vector_to_latex_format(vector: np.ndarray) -> str:
     """
     l = [str(elem) for elem in vector]
     return r'\begin{bmatrix}' + r'\\'.join(l) + r'\end{bmatrix}'
+
+
+# def vector_to_text_format(vector: np.ndarray) -> str:
+#     """
+#     Convert a vector to basic text format.
+#     :param vector: 1D numpy array
+#     :return: basic str representation of the vector
+#     """
+#     s = ', '.join([str(elem) for elem in vector])
+#     return f'({s})'
 
 
 def two_dim_span(vector_1: np.ndarray, vector_2: np.ndarray, *args, **kwargs) -> Surface:
@@ -45,14 +55,23 @@ def hide_all(scene: Scene) -> None:
         )
 
 
-def text_transition(scene: Scene, text: str) -> None:
+def text_transition(scene: Scene, text: str, subtext: Optional[str] = None,
+                    text_animation: Type[Animation] = Write) -> None:
     """
     Show a text in a scene.
     :param scene: the scene to show the text in
+    :param text_animation: the type of animation to use
+    :param subtext: additional, smaller text to show
     :param text: the text to show
     """
     hide_all(scene)
-    scene.play(Write(Text(text)))
+    text1 = Text(text)
+    if subtext:
+        text2 = Text(subtext, font_size=text1.font_size - 2).scale(0.75)
+        text_group = VGroup(text1, text2).arrange(DOWN)
+        scene.play(text_animation(text_group))
+    else:
+        scene.play(text_animation(text1))
     scene.wait()
     hide_all(scene)
 
@@ -68,6 +87,7 @@ def _get_video_duration(file):
         text=True
     )
     return float(result.stdout)
+
 
 def concat_videos(videos_dir: str, video_names: list,
                   keep_existing_audio: bool = False,
